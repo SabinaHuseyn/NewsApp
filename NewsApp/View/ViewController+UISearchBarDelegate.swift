@@ -45,11 +45,7 @@ extension ViewController: UISearchBarDelegate {
         guard let textToSearch = searchBar.text?.lowercased(), !textToSearch.isEmpty else {
             return
         }
-        
-//        if Date().timeIntervalSince(previousRun) > minInterval {
-//            previousRun = Date()
             textSearchChange(textToSearch)
-//        }
     }
     
     func textSearchChange(_ sender: String) {
@@ -58,7 +54,11 @@ extension ViewController: UISearchBarDelegate {
         sourcesSearched = false
         searchbarSearched = true
         publishedDateSearched = false
-        Service.shared.fetchSearch(query: sender) { news in
+        let queryParams: [URLQueryItem] = [
+            URLQueryItem(name: "q", value: sender),
+            URLQueryItem(name: "apiKey", value: API.apiKey),
+        ]
+        Service.shared.fetchNewsForTableview(query: queryParams){ news in
             return DispatchQueue.main.async {
                 self.articlesSearchViewModels = news.map({return ArticlesFilterViewModel(articlesFilterModel: $0)})
                 self.mainTableView.reloadData()
@@ -69,7 +69,6 @@ extension ViewController: UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-//        guard articlesSearchViewModels!.count > 0 else {return}
         articlesSearchViewModels?.removeAll()
     }
 }

@@ -132,12 +132,9 @@ class ViewController: UIViewController, WishDelegate {
     
 //    MARK: - Fetch Data
     func fetchData() {
-       Service.shared.fetchNews { (news, err) in
-           if let err = err {
-               print("Failed to fetch news:", err)
-               return
-           }
-           self.newsFilterViewModels = news?.map({return NewsFilterViewModel(newsFilterModel: $0)}) ?? []
+       Service.shared.fetchNewsForPickerView { news in
+           
+           self.newsFilterViewModels = news.map({return NewsFilterViewModel(newsFilterModel: $0)})
            DispatchQueue.main.async {
                self.filterSource()
                self.filterCountry()
